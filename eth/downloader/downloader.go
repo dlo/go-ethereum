@@ -18,6 +18,7 @@
 package downloader
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/big"
@@ -963,6 +964,15 @@ func (d *Downloader) findAncestorBinarySearch(p *peerConnection, mode SyncMode, 
 					break
 				}
 				header := d.lightchain.GetHeaderByHash(h) // Independent of sync mode, header surely exists
+				content, err := json.Marshal(header)
+				if err != nil {
+					fmt.Println("Error parsing header")
+				} else {
+					fmt.Println("h=", h);
+					fmt.Println("n=", n);
+					fmt.Println(string(content))
+				}
+
 				if header.Number.Uint64() != check {
 					p.log.Warn("Received non requested header", "number", header.Number, "hash", header.Hash(), "request", check)
 					return 0, fmt.Errorf("%w: non-requested header (%d)", errBadPeer, header.Number)
